@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
-          companyId: user.companyId,
+          companyId: user.companyId || undefined,
           company: user.company
         }
       }
