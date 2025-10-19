@@ -8,9 +8,7 @@ export async function GET() {
     const client = new Client({
       connectionString: process.env.DATABASE_URL,
       ssl: { rejectUnauthorized: false },
-      connectionTimeoutMillis: 30000, // 30 segundos
-      idleTimeoutMillis: 30000,
-      query_timeout: 30000
+      connectionTimeoutMillis: 30000 // 30 segundos
     })
 
     console.log('🔍 Tentando conectar diretamente com pg...')
