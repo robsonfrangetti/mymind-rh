@@ -43,7 +43,7 @@ export async function GET() {
     console.error('❌ Erro ao conectar com o banco:', error)
     return NextResponse.json({
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Erro desconhecido',
       message: 'Erro ao conectar com o banco'
     }, { status: 500 })
   } finally {
