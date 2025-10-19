@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# mymindRH - Sistema de Gestão de Recursos Humanos
 
-## Getting Started
+Sistema completo para gestão de recursos humanos com modelo SaaS (Software as a Service).
 
-First, run the development server:
+## 🚀 Funcionalidades
 
+### Para Empresas:
+- **Dashboard** - Visão geral do RH
+- **Funcionários** - Cadastro e gestão de funcionários
+- **Aniversários** - Controle de aniversários
+- **Férias** - Gestão de solicitações de férias
+- **Advertências** - Sistema de advertências
+- **Suspensões** - Controle de suspensões
+- **Demissões** - Gestão de demissões
+- **Contratos** - Contratos de trabalho
+- **Lançamentos** - Lançamentos financeiros
+- **Legislação** - Consulta de legislação trabalhista
+
+### Para Administradores:
+- **Painel Master** - Gerenciamento de todas as empresas
+- **Controle de Limites** - Gerenciamento de limites de funcionários
+- **Cobrança** - Sistema de cobrança por funcionário
+
+## 🛠️ Tecnologias
+
+- **Frontend**: Next.js 15 + React + TypeScript
+- **Styling**: Tailwind CSS
+- **Backend**: Next.js API Routes
+- **Database**: PostgreSQL + Prisma ORM
+- **Authentication**: NextAuth.js
+- **Deployment**: AWS (recomendado)
+
+## 📦 Instalação
+
+1. Clone o repositório:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd mymind-rh
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Instale as dependências:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Configure o banco de dados:
+```bash
+# Configure a DATABASE_URL no arquivo .env
+DATABASE_URL="postgresql://username:password@localhost:5432/mymindrh?schema=public"
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Execute as migrações:
+```bash
+npx prisma migrate dev
+npx prisma generate
+```
 
-## Learn More
+5. Execute o seed para dados iniciais:
+```bash
+npm run db:seed
+```
 
-To learn more about Next.js, take a look at the following resources:
+6. Inicie o servidor de desenvolvimento:
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔐 Credenciais Padrão
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Administrador:
+- Email: `admin@mymindrh.com.br`
+- Senha: `admin123`
 
-## Deploy on Vercel
+### Empresa de Exemplo:
+- Email: `admin@techcorp.com`
+- Senha: `empresa123`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🌐 Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### AWS (Recomendado):
+1. Configure AWS RDS para PostgreSQL
+2. Configure AWS Amplify para frontend
+3. Configure variáveis de ambiente
+4. Deploy automático via Git
+
+### Alternativas:
+- Vercel + Supabase
+- Railway
+- DigitalOcean
+
+## 📊 Modelo de Negócio
+
+- **Cobrança por funcionário**: R$ X por funcionário/mês
+- **Limite controlado**: Empresas têm limite de funcionários
+- **Escalabilidade**: Sistema cresce conforme demanda
+- **Painel administrativo**: Controle total das empresas
+
+## 🔧 Desenvolvimento
+
+```bash
+# Executar em modo desenvolvimento
+npm run dev
+
+# Build para produção
+npm run build
+
+# Executar em produção
+npm start
+
+# Linting
+npm run lint
+```
+
+## 📝 Estrutura do Projeto
+
+```
+src/
+├── app/                    # App Router (Next.js 13+)
+│   ├── (dashboard)/       # Rotas do dashboard da empresa
+│   ├── (admin)/           # Rotas do painel administrativo
+│   ├── login/             # Página de login
+│   └── api/               # API Routes
+├── components/            # Componentes React
+│   ├── layout/            # Componentes de layout
+│   ├── admin/             # Componentes do admin
+│   └── ui/                # Componentes de UI
+├── lib/                   # Utilitários e configurações
+└── types/                 # Definições de tipos TypeScript
+```
+
+## 🚀 Próximos Passos
+
+1. **Configurar banco de dados em produção**
+2. **Implementar sistema de pagamento**
+3. **Adicionar mais funcionalidades de RH**
+4. **Implementar relatórios avançados**
+5. **Adicionar integração com sistemas externos**
+
+## 📞 Suporte
+
+Para dúvidas ou suporte, entre em contato através do painel administrativo.

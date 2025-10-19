@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("EMPLOYEE")
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Company {
+  id                String   @id @default(cuid())
+  name              String
+  cnpj              String   @unique
+  email             String
+  phone             String?
+  address           String?
+  employeeLimit     Int      @default(10)
+  currentEmployees  Int      @default(0)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  users             User[]
+  employees         Employee[]
+  vacations         Vacation[]
+  warnings          Warning[]
+  suspensions       Suspension[]
+  dismissals        Dismissal[]
+  contracts         Contract[]
+  entries           Entry[]
+
+  @@map("companies")
+}
+
+model Employee {
+  id          String   @id @default(cuid())
+  name        String
+  cpf         String   @unique
+  email       String?
+  phone       String?
+  position    String
+  department  String?
+  salary      Float?
+  hireDate    DateTime
+  birthDate   DateTime?
+  address     String?
+  isActive    Boolean  @default(true)
+  companyId   String
+  company     Company  @relation(fields: [companyId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  vacations   Vacation[]
+  warnings    Warning[]
+  suspensions Suspension[]
+  dismissals  Dismissal[]
+  contracts   Contract[]
+  entries     Entry[]
+
+  @@map("employees")
+}
+
+model Vacation {
+  id         String      @id @default(cuid())
+  employeeId String
+  employee   Employee    @relation(fields: [employeeId], references: [id])
+  companyId  String
+  company    Company     @relation(fields: [companyId], references: [id])
+  startDate  DateTime
+  endDate    DateTime
+  days       Int
+  status     String         @default("PENDING")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@map("vacations")
+}
+
+model Warning {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id])
+  type       String
+  reason     String
+  date       DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("warnings")
+}
+
+model Suspension {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id])
+  reason     String
+  startDate  DateTime
+  endDate    DateTime
+  days       Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("suspensions")
+}
+
+model Dismissal {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id])
+  reason     String
+  date       DateTime
+  type       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("dismissals")
+}
+
+model Contract {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id])
+  type       String
+  startDate  DateTime
+  endDate    DateTime?
+  salary     Float?
+  position   String
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("contracts")
+}
+
+model Entry {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id])
+  type       String
+  amount     Float
+  description String?
+  date       DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("entries")
+}
