@@ -1,35 +1,4 @@
-"use client"
-
-import { Building2, Users, DollarSign, TrendingUp } from "lucide-react"
-
 export default function AdminDashboardPage() {
-  const stats = [
-    {
-      title: "Total de Empresas",
-      value: 12,
-      icon: Building2,
-      color: "bg-blue-500"
-    },
-    {
-      title: "Total de Funcionários",
-      value: 156,
-      icon: Users,
-      color: "bg-green-500"
-    },
-    {
-      title: "Receita Mensal",
-      value: "R$ 15.600",
-      icon: DollarSign,
-      color: "bg-yellow-500"
-    },
-    {
-      title: "Crescimento",
-      value: "+12%",
-      icon: TrendingUp,
-      color: "bg-purple-500"
-    }
-  ]
-
   return (
     <div className="space-y-6">
       <div>
@@ -40,26 +9,69 @@ export default function AdminDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, index) => {
-          const Icon = stat.icon
-          return (
-            <div key={index} className="rounded-lg bg-white p-6 shadow">
-              <div className="flex items-center">
-                <div className={`rounded-lg p-3 ${stat.color}`}>
-                  <Icon className="h-6 w-6 text-white" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">
-                    {stat.title}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stat.value}
-                  </p>
-                </div>
-              </div>
+        <div className="rounded-lg bg-white p-6 shadow">
+          <div className="flex items-center">
+            <div className="rounded-lg p-3 bg-blue-500">
+              <div className="h-6 w-6 text-white">🏢</div>
             </div>
-          )
-        })}
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">
+                Total de Empresas
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                12
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-lg bg-white p-6 shadow">
+          <div className="flex items-center">
+            <div className="rounded-lg p-3 bg-green-500">
+              <div className="h-6 w-6 text-white">👥</div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">
+                Total de Funcionários
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                156
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-lg bg-white p-6 shadow">
+          <div className="flex items-center">
+            <div className="rounded-lg p-3 bg-yellow-500">
+              <div className="h-6 w-6 text-white">💰</div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">
+                Receita Mensal
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                R$ 15.600
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-lg bg-white p-6 shadow">
+          <div className="flex items-center">
+            <div className="rounded-lg p-3 bg-purple-500">
+              <div className="h-6 w-6 text-white">📈</div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600">
+                Crescimento
+              </p>
+              <p className="text-2xl font-bold text-gray-900">
+                +12%
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
