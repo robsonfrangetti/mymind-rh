@@ -46,7 +46,12 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           role: user.role,
           companyId: user.companyId || undefined,
-          company: user.company
+          company: user.company ? {
+            id: user.company.id,
+            name: user.company.name,
+            employeeLimit: user.company.employeeLimit,
+            currentEmployees: user.company.currentEmployees
+          } : undefined
         }
       }
     })
