@@ -1,43 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '../../lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
-export default function LoginSupabase() {
+export default function LoginSimple() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
     setError('')
 
-    try {
-      const supabase = createClient()
+    // Login simples - apenas verificar se é o admin
+    if (email === 'admin@mymindrh.com.br' && password === 'admin123') {
+      // Salvar no localStorage
+      localStorage.setItem('user', JSON.stringify({
+        email: 'admin@mindrh.com.br',
+        name: 'Administrador',
+        role: 'ADMIN'
+      }))
       
-      // Fazer login com Supabase
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      })
-
-      if (error) {
-        setError('Email ou senha inválidos')
-        return
-      }
-
-      if (data.user) {
-        // Redirecionar para dashboard
-        router.push('/dashboard')
-      }
-    } catch (err) {
-      setError('Erro ao fazer login')
-    } finally {
-      setLoading(false)
+      // Redirecionar para dashboard
+      router.push('/dashboard')
+    } else {
+      setError('Email ou senha inválidos')
     }
   }
 
@@ -97,10 +85,9 @@ export default function LoginSupabase() {
           <div>
             <button
               type="submit"
-              disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {loading ? 'Entrando...' : 'Entrar'}
+              Entrar
             </button>
           </div>
         </form>
