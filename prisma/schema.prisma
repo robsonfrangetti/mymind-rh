@@ -7,6 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ========================================
+// MODELOS PRINCIPAIS
+// ========================================
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -14,9 +18,20 @@ model User {
   password  String
   role      String   @default("EMPLOYEE")
   companyId String?
+  isActive  Boolean  @default(true)
+  lastLogin DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  // Relacionamentos
   company   Company? @relation(fields: [companyId], references: [id])
+  employees Employee[]
+  vacations Vacation[]
+  warnings  Warning[]
+  suspensions Suspension[]
+  dismissals Dismissal[]
+  contracts Contract[]
+  entries  Entry[]
 
   @@map("users")
 }
@@ -28,19 +43,28 @@ model Company {
   email            String
   phone            String?
   address          String?
+  city             String?
+  state            String?
+  zipCode          String?
   employeeLimit    Int          @default(10)
   currentEmployees Int          @default(0)
   isActive         Boolean      @default(true)
+  plan             String       @default("BASIC") // BASIC, INTERMEDIATE, ENTERPRISE
+  billingCycle     String       @default("MONTHLY") // MONTHLY, YEARLY
+  nextBillingDate  DateTime?
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt
+  
+  // Relacionamentos
+  users            User[]
+  employees        Employee[]
   contracts        Contract[]
   dismissals       Dismissal[]
-  employees        Employee[]
   entries          Entry[]
   suspensions      Suspension[]
-  users            User[]
   vacations        Vacation[]
   warnings         Warning[]
+  billing          Billing[]
 
   @@map("companies")
 }
@@ -57,13 +81,20 @@ model Employee {
   hireDate    DateTime
   birthDate   DateTime?
   address     String?
+  city        String?
+  state       String?
+  zipCode     String?
   isActive    Boolean      @default(true)
   companyId   String
+  userId      String?      // Usuário que cadastrou
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  
+  // Relacionamentos
+  company     Company      @relation(fields: [companyId], references: [id])
+  user        User?        @relation(fields: [userId], references: [id])
   contracts   Contract[]
   dismissals  Dismissal[]
-  company     Company      @relation(fields: [companyId], references: [id])
   entries     Entry[]
   suspensions Suspension[]
   vacations   Vacation[]
@@ -72,18 +103,27 @@ model Employee {
   @@map("employees")
 }
 
+// ========================================
+// MODELOS DE GESTÃO
+// ========================================
+
 model Vacation {
   id         String   @id @default(cuid())
   employeeId String
   companyId  String
+  userId     String   // Usuário que aprovou
   startDate  DateTime
   endDate    DateTime
   days       Int
-  status     String   @default("PENDING")
+  status     String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  reason     String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  
+  // Relacionamentos
   company    Company  @relation(fields: [companyId], references: [id])
   employee   Employee @relation(fields: [employeeId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 
   @@map("vacations")
 }
@@ -92,13 +132,17 @@ model Warning {
   id         String   @id @default(cuid())
   employeeId String
   companyId  String
-  type       String
+  userId     String   // Usuário que aplicou
+  type       String   // VERBAL, WRITTEN, FINAL
   reason     String
   date       DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  
+  // Relacionamentos
   company    Company  @relation(fields: [companyId], references: [id])
   employee   Employee @relation(fields: [employeeId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 
   @@map("warnings")
 }
@@ -107,14 +151,18 @@ model Suspension {
   id         String   @id @default(cuid())
   employeeId String
   companyId  String
+  userId     String   // Usuário que aplicou
   reason     String
   startDate  DateTime
   endDate    DateTime
   days       Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  
+  // Relacionamentos
   company    Company  @relation(fields: [companyId], references: [id])
   employee   Employee @relation(fields: [employeeId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 
   @@map("suspensions")
 }
@@ -123,13 +171,17 @@ model Dismissal {
   id         String   @id @default(cuid())
   employeeId String
   companyId  String
+  userId     String   // Usuário que processou
   reason     String
   date       DateTime
-  type       String
+  type       String   // VOLUNTARY, INVOLUNTARY, MUTUAL
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  
+  // Relacionamentos
   company    Company  @relation(fields: [companyId], references: [id])
   employee   Employee @relation(fields: [employeeId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 
   @@map("dismissals")
 }
@@ -138,7 +190,8 @@ model Contract {
   id         String    @id @default(cuid())
   employeeId String
   companyId  String
-  type       String
+  userId     String    // Usuário que criou
+  type       String    // CLT, PJ, ESTAGIO, TEMPORARIO
   startDate  DateTime
   endDate    DateTime?
   salary     Float?
@@ -146,8 +199,11 @@ model Contract {
   isActive   Boolean   @default(true)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+  
+  // Relacionamentos
   company    Company   @relation(fields: [companyId], references: [id])
   employee   Employee  @relation(fields: [employeeId], references: [id])
+  user       User      @relation(fields: [userId], references: [id])
 
   @@map("contracts")
 }
@@ -156,14 +212,91 @@ model Entry {
   id          String   @id @default(cuid())
   employeeId  String
   companyId   String
-  type        String
+  userId      String   // Usuário que lançou
+  type        String   // SALARY, BONUS, OVERTIME, DEDUCTION
   amount      Float
   description String?
   date        DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
   company     Company  @relation(fields: [companyId], references: [id])
   employee    Employee @relation(fields: [employeeId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
 
   @@map("entries")
+}
+
+// ========================================
+// MODELOS DE BILLING E ADMIN
+// ========================================
+
+model Billing {
+  id          String   @id @default(cuid())
+  companyId   String
+  amount      Float
+  employees   Int
+  plan        String
+  status      String   @default("PENDING") // PENDING, PAID, OVERDUE, CANCELLED
+  dueDate     DateTime
+  paidDate    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacionamentos
+  company     Company  @relation(fields: [companyId], references: [id])
+
+  @@map("billing")
+}
+
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("ADMIN") // ADMIN, SUPER_ADMIN
+  isActive  Boolean  @default(true)
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
+// ========================================
+// MODELOS DE AUDITORIA
+// ========================================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  companyId String?
+  action    String   // CREATE, UPDATE, DELETE, LOGIN, LOGOUT
+  table     String   // users, employees, companies, etc.
+  recordId  String?
+  oldData   Json?
+  newData   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+// ========================================
+// MODELOS DE NOTIFICAÇÕES
+// ========================================
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String?
+  companyId String?
+  type      String   // LIMIT_REACHED, BILLING_DUE, VACATION_APPROVED, etc.
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("notifications")
 }
