@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,42 +14,41 @@ model User {
   password  String
   role      String   @default("EMPLOYEE")
   companyId String?
-  company   Company? @relation(fields: [companyId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  company   Company? @relation(fields: [companyId], references: [id])
 
   @@map("users")
 }
 
 model Company {
-  id                String   @id @default(cuid())
-  name              String
-  cnpj              String   @unique
-  email             String
-  phone             String?
-  address           String?
-  employeeLimit     Int      @default(10)
-  currentEmployees  Int      @default(0)
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
-  users             User[]
-  employees         Employee[]
-  vacations         Vacation[]
-  warnings          Warning[]
-  suspensions       Suspension[]
-  dismissals        Dismissal[]
-  contracts         Contract[]
-  entries           Entry[]
+  id               String       @id @default(cuid())
+  name             String
+  cnpj             String       @unique
+  email            String
+  phone            String?
+  address          String?
+  employeeLimit    Int          @default(10)
+  currentEmployees Int          @default(0)
+  isActive         Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  contracts        Contract[]
+  dismissals       Dismissal[]
+  employees        Employee[]
+  entries          Entry[]
+  suspensions      Suspension[]
+  users            User[]
+  vacations        Vacation[]
+  warnings         Warning[]
 
   @@map("companies")
 }
 
 model Employee {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   name        String
-  cpf         String   @unique
+  cpf         String       @unique
   email       String?
   phone       String?
   position    String
@@ -61,34 +57,33 @@ model Employee {
   hireDate    DateTime
   birthDate   DateTime?
   address     String?
-  isActive    Boolean  @default(true)
+  isActive    Boolean      @default(true)
   companyId   String
-  company     Company  @relation(fields: [companyId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  contracts   Contract[]
+  dismissals  Dismissal[]
+  company     Company      @relation(fields: [companyId], references: [id])
+  entries     Entry[]
+  suspensions Suspension[]
   vacations   Vacation[]
   warnings    Warning[]
-  suspensions Suspension[]
-  dismissals  Dismissal[]
-  contracts   Contract[]
-  entries     Entry[]
 
   @@map("employees")
 }
 
 model Vacation {
-  id         String      @id @default(cuid())
+  id         String   @id @default(cuid())
   employeeId String
-  employee   Employee    @relation(fields: [employeeId], references: [id])
   companyId  String
-  company    Company     @relation(fields: [companyId], references: [id])
   startDate  DateTime
   endDate    DateTime
   days       Int
-  status     String         @default("PENDING")
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  company    Company  @relation(fields: [companyId], references: [id])
+  employee   Employee @relation(fields: [employeeId], references: [id])
 
   @@map("vacations")
 }
@@ -96,14 +91,14 @@ model Vacation {
 model Warning {
   id         String   @id @default(cuid())
   employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id])
   companyId  String
-  company    Company  @relation(fields: [companyId], references: [id])
   type       String
   reason     String
   date       DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  company    Company  @relation(fields: [companyId], references: [id])
+  employee   Employee @relation(fields: [employeeId], references: [id])
 
   @@map("warnings")
 }
@@ -111,15 +106,15 @@ model Warning {
 model Suspension {
   id         String   @id @default(cuid())
   employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id])
   companyId  String
-  company    Company  @relation(fields: [companyId], references: [id])
   reason     String
   startDate  DateTime
   endDate    DateTime
   days       Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  company    Company  @relation(fields: [companyId], references: [id])
+  employee   Employee @relation(fields: [employeeId], references: [id])
 
   @@map("suspensions")
 }
@@ -127,48 +122,48 @@ model Suspension {
 model Dismissal {
   id         String   @id @default(cuid())
   employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id])
   companyId  String
-  company    Company  @relation(fields: [companyId], references: [id])
   reason     String
   date       DateTime
   type       String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  company    Company  @relation(fields: [companyId], references: [id])
+  employee   Employee @relation(fields: [employeeId], references: [id])
 
   @@map("dismissals")
 }
 
 model Contract {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id])
   companyId  String
-  company    Company  @relation(fields: [companyId], references: [id])
   type       String
   startDate  DateTime
   endDate    DateTime?
   salary     Float?
   position   String
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  company    Company   @relation(fields: [companyId], references: [id])
+  employee   Employee  @relation(fields: [employeeId], references: [id])
 
   @@map("contracts")
 }
 
 model Entry {
-  id         String   @id @default(cuid())
-  employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  companyId  String
-  company    Company  @relation(fields: [companyId], references: [id])
-  type       String
-  amount     Float
+  id          String   @id @default(cuid())
+  employeeId  String
+  companyId   String
+  type        String
+  amount      Float
   description String?
-  date       DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  company     Company  @relation(fields: [companyId], references: [id])
+  employee    Employee @relation(fields: [employeeId], references: [id])
 
   @@map("entries")
 }
