@@ -1,43 +1,23 @@
-import { withAuth } from "next-auth/middleware"
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export default withAuth(
-  function middleware(req) {
-    // Lógica adicional de middleware se necessário
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        const { pathname } = req.nextUrl
-        
-        // Rotas públicas
-        if (pathname === "/login" || pathname === "/") {
-          return true
-        }
-        
-        // Verificar se o usuário está autenticado
-        if (!token) {
-          return false
-        }
-        
-        // Verificar acesso ao painel admin
-        if (pathname.startsWith("/admin")) {
-          return token.role === "ADMIN"
-        }
-        
-        // Verificar acesso ao dashboard da empresa
-        if (pathname.startsWith("/dashboard")) {
-          return token.role === "COMPANY_ADMIN" || token.role === "EMPLOYEE"
-        }
-        
-        return true
-      },
-    },
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next()
+  const supabase = createMiddlewareClient({ req, res })
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  // Se não estiver logado e tentar acessar dashboard, redirecionar para login
+  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login-supabase', req.url))
   }
-)
+
+  return res
+}
 
 export const config = {
-  matcher: [
-    "/dashboard/:path*",
-    "/admin/:path*",
-  ]
+  matcher: ['/dashboard/:path*']
 }
