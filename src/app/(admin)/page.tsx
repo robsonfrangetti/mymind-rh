@@ -1,3 +1,5 @@
+"use client"
+
 import { Building2, Users, DollarSign, TrendingUp } from "lucide-react"
 
 export default function AdminDashboardPage() {
