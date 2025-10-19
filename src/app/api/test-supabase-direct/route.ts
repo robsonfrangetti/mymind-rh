@@ -1,41 +1,46 @@
 import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET() {
   try {
-    // Teste direto com pg (PostgreSQL driver)
-    const { Client } = await import('pg')
+    const supabase = await createClient()
     
-    const client = new Client({
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false },
-      connectionTimeoutMillis: 30000 // 30 segundos
-    })
-
-    console.log('🔍 Tentando conectar diretamente com pg...')
+    console.log('🔍 Testando conexão com Supabase direto...')
     
-    await client.connect()
-    console.log('✅ Conexão pg estabelecida!')
-
-    const result = await client.query('SELECT 1 as test, NOW() as timestamp')
-    console.log('✅ Query pg executada:', result.rows)
-
-    await client.end()
-
+    // Teste de conexão
+    const { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .limit(5)
+    
+    if (error) {
+      console.error('❌ Erro na consulta:', error)
+      return NextResponse.json({
+        success: false,
+        error: error.message,
+        message: 'Erro na consulta Supabase',
+        timestamp: new Date().toISOString()
+      }, { status: 500 })
+    }
+    
+    console.log('✅ Conexão Supabase funcionou!')
+    console.log('👥 Usuários encontrados:', data?.length || 0)
+    
     return NextResponse.json({
       success: true,
-      message: 'Conexão direta com pg funcionou!',
-      result: result.rows,
+      message: 'Conexão Supabase funcionou!',
+      users: data,
+      count: data?.length || 0,
       timestamp: new Date().toISOString()
     })
 
   } catch (error) {
-    console.error('❌ Erro na conexão direta pg:', error)
+    console.error('❌ Erro na conexão Supabase:', error)
     
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Erro desconhecido',
-      errorType: error instanceof Error ? error.constructor.name : 'Unknown',
-      message: 'Erro na conexão direta pg',
+      message: 'Erro na conexão Supabase',
       timestamp: new Date().toISOString()
     }, { status: 500 })
   }
