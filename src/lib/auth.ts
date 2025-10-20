@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { NextRequest } from 'next/server'
-import prisma from './prisma'
+import { prisma } from './prisma'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'mymindrh-secret-key-2024'
 
