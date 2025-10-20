@@ -275,8 +275,8 @@ export async function logAudit(
         action,
         table,
         recordId,
-        oldData: oldData ? JSON.stringify(oldData) : null,
-        newData: newData ? JSON.stringify(newData) : null,
+        oldData: oldData ? JSON.stringify(oldData) : undefined,
+        newData: newData ? JSON.stringify(newData) : undefined,
         ipAddress: request.ip || request.headers.get('x-forwarded-for') || 'unknown',
         userAgent: request.headers.get('user-agent') || 'unknown'
       }
